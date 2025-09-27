@@ -1,0 +1,205 @@
+# Hexo Configuration
+## Docs: https://hexo.io/docs/configuration.html
+## Source: https://github.com/hexojs/hexo/
+
+# Site
+title: 你的博客标题
+subtitle: 你的博客副标题
+description: ''
+keywords:
+author: 你的名字
+language: zh-CN
+timezone: ''
+
+# URL
+## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
+url: https://blog.example.com
+# 原默认 permalink 已由下方 abbrlink 规则覆盖
+# permalink: :year/:month/:day/:title/
+permalink_defaults:
+pretty_urls:
+  trailing_index: true # Set to false to remove trailing 'index.html' from permalinks
+  trailing_html: true # Set to false to remove trailing '.html' from permalinks
+
+# Directory
+source_dir: source
+public_dir: public
+tag_dir: tags
+archive_dir: archives
+category_dir: categories
+code_dir: downloads/code
+i18n_dir: :lang
+skip_render:
+
+# Writing
+new_post_name: :title.md # File name of new posts
+default_layout: post
+titlecase: false # Transform title into titlecase
+external_link:
+  enable: true # Open external links in new tab
+  field: site # Apply to the whole site
+  exclude: ''
+filename_case: 0
+render_drafts: false
+post_asset_folder: false
+relative_link: false
+future: true
+
+# Home page setting
+# path: Root path for your blogs index page. (default = '')
+# per_page: Posts displayed per page. (0 = disable pagination)
+# order_by: Posts order. (Order by date descending by default)
+index_generator:
+  path: ''
+  per_page: 10
+  order_by: -date
+
+# Category & Tag
+default_category: uncategorized
+category_map:
+tag_map:
+
+# Metadata elements
+## https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta
+meta_generator: true
+
+# Date / Time format
+## Hexo uses Moment.js to parse and display date
+## You can customize the date format as defined in
+## http://momentjs.com/docs/#/displaying/format/
+date_format: YYYY-MM-DD
+time_format: HH:mm:ss
+## updated_option supports 'mtime', 'date', 'empty'
+updated_option: 'mtime'
+
+# Pagination
+## Set per_page to 0 to disable pagination
+per_page: 10
+pagination_dir: page
+
+# Include / Exclude file(s)
+## include:/exclude: options only apply to the 'source/' folder
+include:
+exclude:
+ignore:
+
+# Extensions
+## Plugins: https://hexo.io/plugins/
+## Themes: https://hexo.io/themes/
+theme: fluid
+
+# Feed (RSS/Atom)
+feed:
+  type: atom
+  path: atom.xml
+  limit: 0
+  hub:
+  content: true
+  content_limit: 140
+  order_by: -date
+
+# Sitemap
+sitemap:
+  path: sitemap.xml
+  rel: true
+  tags: true
+  categories: true
+
+# Abbrlink (short & stable permalink hash)
+abbrlink:
+  alg: crc32  # or crc16 / md5
+  rep: hex    # dec / hex
+  drafts: false
+  # force: true # enable if need regenerate
+
+# Override permalink to use abbrlink (keep date folders optional)
+permalink: post/:abbrlink/
+
+# Local search database
+search:
+  path: search.xml
+  field: post
+  content: true
+  format: html
+
+# Prism.js highlighting plugin (disable default highlight.js)
+syntax_highlighter: prismjs
+highlight:
+  enable: false
+prismjs:
+  preprocess: true
+  line_number: true
+  tab_replace: ''
+  # theme: default # can be set in theme config
+
+# hexo-prism-plugin 配置
+prism_plugin:
+  mode: 'preprocess'   # 可选 realtime
+  theme: 'default'
+  line_number: true
+  custom_css: ''
+  copy:
+    enable: true
+    button_text: '复制'
+    success_text: '已复制!'
+
+# Markdown-it renderer settings
+markdown:
+  preset: default
+  render:
+    html: true
+    xhtmlOut: false
+    breaks: false
+    linkify: true
+    typographer: true
+  plugins:
+    - markdown-it-emoji
+    - markdown-it-footnote
+    - markdown-it-task-lists
+  anchors:
+    level: 2
+    collisionSuffix: 'v'
+    permalink: true
+    permalinkClass: header-anchor
+    permalinkSymbol: '#'
+
+# hexo-neat html/css/js minify
+neat_enable: true
+neat_html:
+  enable: true
+  exclude: []
+neat_css:
+  enable: true
+  exclude: []
+neat_js:
+  enable: true
+  mangle: false
+  exclude: []
+
+# Deployment
+## Docs: https://hexo.io/docs/one-command-deployment
+deploy: {}
+
+# Word count & reading time (hexo-symbols-count-time)
+symbols_count_time:
+  symbols: true
+  time: true
+  total_symbols: true
+  total_time: true
+  awl: 2
+  wpm: 300
+  suffix: true
+
+# Waline 评论（需要在 Fluid 中开启自定义注入或其内置评论扩展）
+waline:
+  enable: true
+  # 使用反向代理子路径 /comment/ ，确保上游或容器内 nginx 已代理到 waline 服务
+  serverURL: https://blog.example.com/comment/
+  comment: true
+  pageview: true
+  locale:
+    placeholder: 发表评论...
+  emoji:
+    - https://unpkg.com/@waline/emojis@1.2.0/weibo
+  requiredMeta: ['nick','mail']
+  dark: auto
