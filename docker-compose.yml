@@ -26,7 +26,7 @@ services:
       - ${WALINE_DB_DIR:-./data/waline-db}:/var/lib/mysql
 
   waline:
-    image: walinejs/server:latest
+    image: lizheming/waline:latest
     container_name: waline
     restart: unless-stopped
     depends_on:
