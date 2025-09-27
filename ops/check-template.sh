@@ -20,9 +20,9 @@ check_placeholder() {
 }
 
 # 1) BLOG_IMAGE 默认 OWNER
-if grep -RIn "BLOG_IMAGE=ghcr.io/OWNER/hexo-blog:latest" .env .env.example 2>/dev/null | grep -q .; then
-  echo -e "${RED}未替换 BLOG_IMAGE=ghcr.io/OWNER/hexo-blog:latest${NC}"
-  echo "  建议: 将 OWNER 改为你的 GitHub 账户，如 ghcr.io/yourname/hexo-blog:latest"
+if grep -RIn "BLOG_IMAGE=ghcr.io/OWNER/yangyus8-blog:latest" .env .env.example 2>/dev/null | grep -q .; then
+  echo -e "${RED}未替换 BLOG_IMAGE=ghcr.io/OWNER/yangyus8-blog:latest${NC}"
+  echo "  建议: 将 OWNER 改为你的 GitHub 账户，如 ghcr.io/yourname/yangyus8-blog:latest"
   fail=1
 fi
 

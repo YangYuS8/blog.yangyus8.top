@@ -5,7 +5,7 @@
 # ================= 基础变量 =================
 SHELL := /bin/bash
 HEXO := npx hexo
-IMAGE := ${BLOG_IMAGE:-ghcr.io/OWNER/hexo-blog:latest}
+IMAGE := ${BLOG_IMAGE:-ghcr.io/OWNER/yangyus8-blog:latest}
 DOCKER_COMPOSE := docker compose
 
 # 默认目标

@@ -8,7 +8,7 @@ ENDPOINT="${MINIO_ENDPOINT:-http://127.0.0.1:9000}"
 ACCESS_KEY="${MINIO_ROOT_USER:-minioadmin}"
 SECRET_KEY="${MINIO_ROOT_PASSWORD:-minioadmin}"
 BUCKET="${MINIO_BUCKET:-blog}"
-PUBLIC_PREFIX="${MINIO_PUBLIC_PREFIX:-https://cdn.example.com}" # 供前端引用的域名/反代
+PUBLIC_PREFIX="${MINIO_PUBLIC_PREFIX:-https://cdn.yangyus8.top}" # 供前端引用的域名/反代
 
 echo "[+] 配置 mc alias -> minio"
 if ! command -v mc >/dev/null 2>&1; then

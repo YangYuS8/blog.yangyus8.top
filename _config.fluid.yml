@@ -4,7 +4,7 @@
 # 站点导航栏
 navbar:
   logo:
-    text: YourName
+    text: 杨与S8
   menu:
     - name: 首页
       link: /
@@ -22,11 +22,11 @@ index:
   banner_img: https://cdn.jsdelivr.net/gh/hexo-fluid/static@master/img/default.png
   slogan:
     enable: true
-    text: 记录与分享
+    text: 探索，实践，记录，分享
 
 # 页脚
 footer:
-  content: '©<%= new Date().getFullYear() %> YourName <%- partial("_includes/build_revision") %>'
+  content: '©<%= new Date().getFullYear() %> 杨与S8 <%- partial("_includes/build_revision") %>'
   beian:
     enable: false
 
