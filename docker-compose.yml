@@ -60,7 +60,7 @@ services:
     # 初始化副本集（只需一次）可在容器启动后执行：docker exec -it twikoo-db mongosh --eval 'rs.initiate()'
 
   twikoo:
-    image: twikoojs/twikoo:latest
+    image: imaegoo/twikoo:latest
     container_name: twikoo
     restart: unless-stopped
     depends_on:
