@@ -70,8 +70,13 @@ update-local: ## （本地/内网服务器）拉取最新镜像并重启
 # ================= 重置 / 清空站点数据 =================
 # ================= 数据库备份 =================
 .PHONY: backup-db
-backup-db: ## 备份 Waline 数据库 (本地/服务器同理，可设置 RETAIN=14 BACKUP_DIR=backups)
+backup-db: ## (已弃用) 旧 MariaDB 备份脚本占位，如不再使用可删除该目标
 	bash ops/backup-db.sh
+
+# Twikoo 预热（请求一次 API，降低首访延迟）
+.PHONY: twikoo-warmup
+twikoo-warmup: ## 预热 Twikoo （需服务器已启动 docker compose）
+	@curl -s -o /dev/null -w 'Twikoo warmup TTFB=%{time_starttransfer}s TOTAL=%{time_total}s\n' $${TWIKOO_PUBLIC_URL:-https://blog.yangyus8.top/twikoo/} || true
 
 # ================= 按 abbrlink 删除单篇文章 =================
 

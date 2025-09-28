@@ -3,7 +3,7 @@
 # 本文件在原有基础上补充：
 # - fun_features / dark_mode / lazyload / font / open_graph 等官方段落
 # - 统一使用 post.comments + comments 插件配置方式
-# - 自定义 Waline 通过 custom_js 注入（保留 waline 插件配置以便未来升级主题时可直接生效）
+# - （已移除 Waline 遗留配置）
 # - 保留原有配色与导航、Banner、自定义 slogan
 
 # 用于浏览器标签的图标
@@ -171,23 +171,8 @@ post:
 # （已移除 prism 配置，统一使用 highlight.js）
 
 # 自定义资源注入
-# 注意：为确保 Waline v3 初始化，必须包含 /js/waline-init.js
 custom_js: []
 custom_css: []
-
-# （删除旧 comment: 段，使用官方 post.comments + waline 插件配置）
-
-# Waline (已停用，保留做回退参考)
-# waline:
-#   serverURL: https://blog.yangyus8.top/comment/
-#   path: window.location.pathname
-#   meta: ['nick', 'mail', 'link']
-#   requiredMeta: ['nick']
-#   lang: 'zh-CN'
-#   emoji: ['https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo']
-#   dark: 'html[data-user-color-scheme="dark"]'
-#   wordLimit: 0
-#   pageSize: 10
 
 # Twikoo 配置（选择其一部署方式：腾讯云 CloudBase / Vercel / 自托管）
 # 如果使用 Vercel / 自托管 API，把 envId 改成服务端地址，例如：https://comment.example.com
