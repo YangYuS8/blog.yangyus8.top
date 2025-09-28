@@ -38,6 +38,9 @@ services:
       DISABLE_EMAIL: 'true'
       MYSQL_HOST: waline-db
       MYSQL_PORT: 3306
+      # Waline 1.x 服务端期望的数据库名变量是 MYSQL_DB；
+      # MariaDB 官方镜像使用 MYSQL_DATABASE 创建库。这里做一次映射，确保只在 .env 写 MYSQL_DATABASE 也能生效。
+      MYSQL_DB: ${MYSQL_DATABASE}
     volumes:
       - ${WALINE_DATA_DIR:-./data/waline}:/data
     expose:
