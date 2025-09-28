@@ -1,5 +1,10 @@
-# Fluid 主题主配置
-# 文档: https://hexo-fluid.github.io/docs/
+# Fluid 主题主配置（已合并官方最新示例 + 站点自定义）
+# 官方文档: https://hexo.fluid-dev.com/docs/guide/
+# 本文件在原有基础上补充：
+# - fun_features / dark_mode / lazyload / font / open_graph 等官方段落
+# - 统一使用 post.comments + comments 插件配置方式
+# - 自定义 Waline 通过 custom_js 注入（保留 waline 插件配置以便未来升级主题时可直接生效）
+# - 保留原有配色与导航、Banner、自定义 slogan
 
 # 用于浏览器标签的图标
 favicon: https://cdn.yangyus8.top/blog/geneden.webp
@@ -37,57 +42,141 @@ footer:
   beian:
     enable: false
 
-# 代码高亮（使用 hexo-prism-plugin 已预处理）
+# 代码块增强配置（基于官方最新字段 + 站点自定义主题）
 code:
-  copy_btn: true
+  copy_btn: true               # 显示复制按钮
+  language:                    # 显示语言标识
+    enable: true
+    default: "TEXT"
   highlight:
-    enable: true    # 启用主题 / Hexo 内置 highlight.js 方案
-    lib: "highlightjs"
+    enable: true
+    line_number: true          # 行号
+    lib: "highlightjs"         # 使用 highlight.js（已移除 Prism）
     highlightjs:
-      # 在官方 demo (https://highlightjs.org/demo/) 里挑选存在的文件名；Fluid 打包/或 CDN 可能不含 base16 子目录形式命名
-      # 使用通用、稳定可用的样式，避免报 ‘not found’
-      style: "atom-one-light"
-      style_dark: "atom-one-dark"
+      style: "atom-one-light"  # 浅色主题
+      style_dark: "atom-one-dark" # 深色主题
 
-# 本地搜索
+# 一些好玩的功能
+fun_features:
+  typing:
+    enable: true
+    typeSpeed: 70
+    cursorChar: "_"
+    loop: false
+    scope: []
+  anchorjs:
+    enable: true
+    element: h1,h2,h3,h4,h5,h6
+    placement: left
+    visible: hover
+    icon: ""
+  progressbar:
+    enable: true
+    height_px: 3
+    color: "#29d"
+    options: { showSpinner: false, trickleSpeed: 100 }
+
+# 暗色模式（保持 auto, 支持 prefers-color-scheme）
+dark_mode:
+  enable: true
+  default: auto
+
+# 字体配置（官方段落，可按需再调整）
+font:
+  font_size: 16px
+  font_family:
+  letter_spacing: 0.02em
+  code_font_size: 85%
+
+# 搜索（采用官方格式；本地生成 local-search.xml）
 search:
   enable: true
-  type: local
+  path: /local-search.xml
+  generate_path: /local-search.xml
+  field: post
+  content: true
 
-# RSS 链接（Feed 插件生成的 atom.xml）
-links:
-  rss: /atom.xml
+# RSS 订阅地址（自定义字段；避免与友链页面 links 配置冲突）
+rss_feed: /atom.xml
 
-# 文章设置
+# 文章页设置（整合官方结构 + 保留原有需求）
 post:
+  banner_img: https://cdn.yangyus8.top/blog/20250928.webp
+  banner_img_height: 70
+  banner_mask_alpha: 0.3
   meta:
-    date: true
-    category: true
-    tag: true
-    wordcount: true
-    readingtime: true
+    author:
+      enable: false
+    date:
+      enable: true
+      format: "LL a"
+    wordcount:
+      enable: true
+    min2read:            # 用官方字段取代 readingtime
+      enable: true
+      awl: 2
+      wpm: 60
+    views:
+      enable: false
+      source: "busuanzi"
+  updated:
+    enable: false
+    date_format: "LL a"
+    relative: false
+    note_class: info
+  category_bar:
+    enable: true
+    specific: true
+    placement: left
+    post_order_by: "title"
+    post_limit: 0
   toc:
     enable: true
+    placement: right
     headingSelector: 'h1,h2,h3'
-    collapse: false
+    collapseDepth: 0
+  copyright:
+    enable: true
+    license: 'BY'
+    author:
+      enable: true
+    post_date:
+      enable: true
+      format: "LL"
+    update_date:
+      enable: false
+      format: "LL"
+  prev_next:
+    enable: true
+  image_caption:
+    enable: true
+  image_zoom:
+    enable: true
+    img_url_replace: ['', '']
+  footnote:
+    enable: true
+    header: ''
+  math:
+    enable: false
+    specific: false
+    engine: mathjax
+  mermaid:
+    enable: false
+    specific: false
+    options: { theme: 'default' }
   comments:
     enable: true
     type: waline
 
-# Prism 主题可自定义（可选）
-prism: false  # 关闭 prism 自定义（迁移到内置 highlight）
+# （已移除 prism 配置，统一使用 highlight.js）
 
-# 自定义注入（按需）
-custom_js: []
+# 自定义资源注入
+# 注意：为确保 Waline v3 初始化，必须包含 /js/waline-init.js
+custom_js:
+  - /js/waline-init.js
 custom_css: []
 
-# Waline 前端挂载点（在主题 layout 中已有 hooks，可用 injector 或直接在文章末尾 script 初始化——这里仅配置占位说明）
-comment:
-  enable: true
-  type: waline
-  # v3 客户端资源（ESM）
-  js: https://unpkg.com/@waline/client@v3/dist/waline.js
-  css: https://unpkg.com/@waline/client@v3/dist/waline.css
+# （删除旧 comment: 段，使用官方 post.comments + waline 插件配置）
 
 # Waline
 # 从 Valine 衍生而来，额外增加了服务端和多种功能
@@ -205,3 +294,90 @@ color:
   # button_hover_bg_color_dark: "#46647e"
   button_hover_bg_color: "#eeebeb" # 主色调5%淡化
   button_hover_bg_color_dark: "#454141"
+
+# 图片与评论懒加载
+lazyload:
+  enable: true
+  loading_img: /img/loading.gif
+  onlypost: false
+  offset_factor: 2
+
+# 网站访问统计（保持关闭，仅模板化保留）
+web_analytics:
+  enable: false
+  follow_dnt: true
+  baidu:
+  google:
+    measurement_id:
+  tencent:
+    sid:
+    cid:
+  leancloud:
+    app_id:
+    app_key:
+    server_url:
+    path: window.location.pathname
+    ignore_local: false
+  umami:
+    src:
+    website_id:
+    domains:
+    start_time: 2024-01-01
+    token:
+    api_server:
+
+# Open Graph
+open_graph:
+  enable: true
+  twitter_card: summary_large_image
+  twitter_id:
+  twitter_site:
+  google_plus:
+  fb_admins:
+  fb_app_id:
+
+# 归档 / 分类 / 标签 / 关于 / 友链 / 404 等页面（如需定制可继续扩展）
+archive:
+  banner_img: https://cdn.yangyus8.top/blog/20250928.webp
+  banner_img_height: 60
+  banner_mask_alpha: 0.3
+category:
+  enable: true
+  banner_img: https://cdn.yangyus8.top/blog/20250928.webp
+  banner_img_height: 60
+  banner_mask_alpha: 0.3
+  order_by: "-length"
+  collapse_depth: 0
+  post_order_by: "-date"
+  post_limit: 10
+tag:
+  enable: true
+  banner_img: https://cdn.yangyus8.top/blog/20250928.webp
+  banner_img_height: 80
+  banner_mask_alpha: 0.3
+  tagcloud:
+    min_font: 15
+    max_font: 30
+    unit: px
+    start_color: "#BBBBEE"
+    end_color: "#337ab7"
+about:
+  enable: true
+  banner_img: https://cdn.yangyus8.top/blog/20250928.webp
+  banner_img_height: 60
+  banner_mask_alpha: 0.3
+  avatar: /img/avatar.png
+  name: "杨与S8"
+  intro: "探索 · 实践 · 记录 · 分享"
+links:
+  enable: true
+  banner_img: https://cdn.yangyus8.top/blog/20250928.webp
+  banner_img_height: 60
+  banner_mask_alpha: 0.3
+  items: []
+page404:
+  enable: true
+  banner_img: https://cdn.yangyus8.top/blog/20250928.webp
+  banner_img_height: 85
+  banner_mask_alpha: 0.3
+  redirect_delay: 5000
