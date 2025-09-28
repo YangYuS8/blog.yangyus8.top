@@ -123,25 +123,22 @@ search:
   format: html
 
 # Prism.js highlighting plugin (disable default highlight.js)
-syntax_highlighter: prismjs
+# syntax_highlighter: prismjs
 highlight:
-  enable: false
-prismjs:
-  preprocess: true
+  enable: true
   line_number: true
+  auto_detect: false
   tab_replace: ''
+  wrap: true
+  hljs: true
+# prismjs:
+#   preprocess: true
+#   line_number: true
+#   tab_replace: ''
   # theme: default # can be set in theme config
 
 # hexo-prism-plugin 配置
-prism_plugin:
-  mode: 'preprocess'   # 可选 realtime
-  theme: 'default'
-  line_number: true
-  custom_css: ''
-  copy:
-    enable: true
-    button_text: '复制'
-    success_text: '已复制!'
+# prism 已弃用，迁移到内置 highlight，如需回退请恢复 prism_plugin 段落并禁用 highlight
 
 # Markdown-it renderer settings
 markdown:
