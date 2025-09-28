@@ -27,6 +27,12 @@ services:
     volumes:
       - ${TWIKOO_DB_DIR:-./data/twikoo-db}:/data/db
     # 初始化副本集（只需一次）可在容器启动后执行：docker exec -it twikoo-db mongosh --eval 'rs.initiate()'
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   # 副本集自动初始化（一次性 Job）
   twikoo-rs-init:
@@ -34,14 +40,14 @@ services:
     depends_on:
       - twikoo-db
     entrypoint: ["/bin/bash","-c"]
-    command: >-
-      "set -e; 
-      echo '[twikoo-rs-init] waiting mongo';
+    command: |
+      set -e
+      echo '[twikoo-rs-init] waiting mongo'
       for i in $(seq 1 30); do
-        if mongosh --host twikoo-db:27017 --quiet --eval 'db.adminCommand("ping").ok' >/dev/null 2>&1; then echo 'mongo up'; break; fi; sleep 2; done;
-      mongosh --host twikoo-db:27017 --quiet --eval 'try { rs.status() } catch(e) { rs.initiate({_id:"rs0", members:[{_id:0, host:"twikoo-db:27017"}]}); }';
-      mongosh --host twikoo-db:27017 --quiet --eval 'rs.status().members.forEach(m=>print("member:", m.name, m.stateStr))';
-      echo '[twikoo-rs-init] done.'"
+        if mongosh --host twikoo-db:27017 --quiet --eval 'db.adminCommand("ping").ok' >/dev/null 2>&1; then echo 'mongo up'; break; fi; sleep 2; done
+      mongosh --host twikoo-db:27017 --quiet --eval 'try { rs.status() } catch(e) { rs.initiate({_id:"rs0", members:[{_id:0, host:"twikoo-db:27017"}]}); }'
+      mongosh --host twikoo-db:27017 --quiet --eval 'rs.status().members.forEach(m=>print("member:", m.name, m.stateStr))'
+      echo '[twikoo-rs-init] done.'
     restart: "no"
 
   # 索引自动创建（可重复执行，幂等）
@@ -50,9 +56,9 @@ services:
     depends_on:
       - twikoo-rs-init
     entrypoint: ["/bin/bash","-c"]
-    command: >-
-      "set -e; 
-      echo '[twikoo-index-init] ensuring indexes';
+    command: |
+      set -e
+      echo '[twikoo-index-init] ensuring indexes'
       mongosh --host twikoo-db:27017 twikoo --quiet --eval '
         function ei(c, spec, opt){
           const names=db.getCollection(c).getIndexes().map(i=>i.name);
@@ -63,8 +69,8 @@ services:
         ei("comment", { rid:1 }, { name:"rid_1" });
         ei("comment", { mailMd5:1 }, { name:"mailMd5_1" });
         ei("counter", { url:1 }, { name:"url_counter_1" });
-        print('[twikoo-index-init] complete');
-      '";
+        print("[twikoo-index-init] complete");
+      '
     restart: "no"
 
   twikoo:
@@ -72,7 +78,8 @@ services:
     container_name: twikoo
     restart: unless-stopped
     depends_on:
-      - twikoo-index-init
+      twikoo-index-init:
+        condition: service_completed_successfully
     environment:
       TZ: Asia/Shanghai
       # 如果副本集已初始化，使用 mongodb://twikoo-db:27017/twikoo?replicaSet=rs0

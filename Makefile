@@ -77,6 +77,9 @@ backup-db: ## (已弃用) 旧 MariaDB 备份脚本占位，如不再使用可删
 .PHONY: twikoo-warmup
 twikoo-warmup: ## 预热 Twikoo （需服务器已启动 docker compose）
 	@curl -s -o /dev/null -w 'Twikoo warmup TTFB=%{time_starttransfer}s TOTAL=%{time_total}s\n' $${TWIKOO_PUBLIC_URL:-https://blog.yangyus8.top/twikoo/} || true
+.PHONY: twikoo-reset
+twikoo-reset: ## 重置 Twikoo 副本集 (可选 PURGE=1 清空数据) 例: make twikoo-reset PURGE=1
+	bash ops/twikoo-reset.sh
 
 # ================= 按 abbrlink 删除单篇文章 =================
 
