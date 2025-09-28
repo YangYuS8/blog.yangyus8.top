@@ -6,45 +6,77 @@ services:
     ports:
       - "80:80"   # 若由上层反向代理再做 80/443，可改成 "127.0.0.1:8080:80"
     depends_on:
-      - waline
+      - twikoo
     environment:
-      WALINE_SERVER_URL: ${WALINE_PUBLIC_URL:-https://blog.yangyus8.top/comment/}
+      # 自托管 Twikoo API 地址（供前端主题配置/回显用，可选，主题直接使用 _config.fluid.yml 中的 envId）
+      TWIKOO_API_URL: ${TWIKOO_PUBLIC_URL:-https://blog.yangyus8.top/twikoo/}
     labels:
       # 仅为 blog 服务开启 watchtower 自动更新，其它服务保持不自动更新
       - "com.centurylinklabs.watchtower.enable=true"
 
-  waline-db:
-    image: mariadb:11.4
-    container_name: waline-db
+  # --- Waline 评论系统（已切换到 Twikoo，自托管保留回退，需恢复请取消注释） ---
+  # waline-db:
+  #   image: mariadb:11.4
+  #   container_name: waline-db
+  #   restart: unless-stopped
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     TZ: Asia/Shanghai
+  #   command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+  #   volumes:
+  #     - ${WALINE_DB_DIR:-./data/waline-db}:/var/lib/mysql
+  # waline:
+  #   image: lizheming/waline:latest
+  #   container_name: waline
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - waline-db
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     TZ: Asia/Shanghai
+  #     DISABLE_EMAIL: 'true'
+  #     MYSQL_HOST: waline-db
+  #     MYSQL_PORT: 3306
+  #     MYSQL_DB: ${MYSQL_DATABASE}
+  #   volumes:
+  #     - ${WALINE_DATA_DIR:-./data/waline}:/data
+  #   expose:
+  #     - "8360"
+
+  # --- Twikoo 评论系统（自托管模式） ---
+  # 数据库：MongoDB（Twikoo 原生使用 Mongo）
+  twikoo-db:
+    image: mongo:7.0
+    container_name: twikoo-db
     restart: unless-stopped
-    env_file:
-      - .env
     environment:
       TZ: Asia/Shanghai
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    command: >-
+      mongod --bind_ip 0.0.0.0 --replSet rs0 --oplogSize 128
     volumes:
-      - ${WALINE_DB_DIR:-./data/waline-db}:/var/lib/mysql
+      - ${TWIKOO_DB_DIR:-./data/twikoo-db}:/data/db
+    # 初始化副本集（只需一次）可在容器启动后执行：docker exec -it twikoo-db mongosh --eval 'rs.initiate()'
 
-  waline:
-    image: lizheming/waline:latest
-    container_name: waline
+  twikoo:
+    image: twikoojs/twikoo:latest
+    container_name: twikoo
     restart: unless-stopped
     depends_on:
-      - waline-db
-    env_file:
-      - .env
+      - twikoo-db
     environment:
       TZ: Asia/Shanghai
-      DISABLE_EMAIL: 'true'
-      MYSQL_HOST: waline-db
-      MYSQL_PORT: 3306
-      # Waline 1.x 服务端期望的数据库名变量是 MYSQL_DB；
-      # MariaDB 官方镜像使用 MYSQL_DATABASE 创建库。这里做一次映射，确保只在 .env 写 MYSQL_DATABASE 也能生效。
-      MYSQL_DB: ${MYSQL_DATABASE}
-    volumes:
-      - ${WALINE_DATA_DIR:-./data/waline}:/data
+      # 如果副本集已初始化，使用 mongodb://twikoo-db:27017/twikoo?replicaSet=rs0
+      MONGO_URL: ${TWIKOO_MONGO_URL:-mongodb://twikoo-db:27017/twikoo}
+      # 允许的 CORS 来源（逗号分隔多个域名），可在 .env 中覆盖
+      TWIKOO_CORS_ALLOW_ORIGIN: ${TWIKOO_CORS_ALLOW_ORIGIN:-https://blog.yangyus8.top}
+      # 节流 & 其他可选：TWIKOO_THROTTLE, TWIKOO_MAX_COMMENT_NEST, etc.
     expose:
-      - "8360"
+      - "8080"
+    # 若需要持久化上传文件（Twikoo 支持对象存储适配，可后续拓展）
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 
   watchtower:
     image: containrrr/watchtower:latest

@@ -166,7 +166,7 @@ post:
     options: { theme: 'default' }
   comments:
     enable: true
-    type: waline
+    type: twikoo  # 切换为 Twikoo
 
 # （已移除 prism 配置，统一使用 highlight.js）
 
@@ -177,19 +177,29 @@ custom_css: []
 
 # （删除旧 comment: 段，使用官方 post.comments + waline 插件配置）
 
-# Waline
-# 从 Valine 衍生而来，额外增加了服务端和多种功能
-# See: https://waline.js.org/
-waline:
-  serverURL: https://blog.yangyus8.top/comment/
+# Waline (已停用，保留做回退参考)
+# waline:
+#   serverURL: https://blog.yangyus8.top/comment/
+#   path: window.location.pathname
+#   meta: ['nick', 'mail', 'link']
+#   requiredMeta: ['nick']
+#   lang: 'zh-CN'
+#   emoji: ['https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo']
+#   dark: 'html[data-user-color-scheme="dark"]'
+#   wordLimit: 0
+#   pageSize: 10
+
+# Twikoo 配置（选择其一部署方式：腾讯云 CloudBase / Vercel / 自托管）
+# 如果使用 Vercel / 自托管 API，把 envId 改成服务端地址，例如：https://comment.example.com
+twikoo:
+  envId: https://blog.yangyus8.top/twikoo/   # 自托管：使用 Nginx 反向代理前缀
+  # region: ap-shanghai                      # 仅 CloudBase 需要，现自托管注释
   path: window.location.pathname
-  meta: ['nick', 'mail', 'link']
-  requiredMeta: ['nick']
-  lang: 'zh-CN'
-  emoji: ['https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo']
-  dark: 'html[data-user-color-scheme="dark"]'
-  wordLimit: 0
-  pageSize: 10
+  # 可选高级参数（按需解注）：
+  # lang: zh-CN
+  # reaction: true
+  # katex: false
+  # uploadImage: true
 
 # 主题颜色配置，其他不生效的地方请使用自定义 css 解决，配色可以在下方链接中获得启发
 # See: https://www.webdesignrankings.com/resources/lolcolors/
