@@ -172,8 +172,7 @@ post:
 
 # 自定义资源注入
 # 注意：为确保 Waline v3 初始化，必须包含 /js/waline-init.js
-custom_js:
-  - /js/waline-init.js
+custom_js: []
 custom_css: []
 
 # （删除旧 comment: 段，使用官方 post.comments + waline 插件配置）
