@@ -70,6 +70,9 @@ post:
     enable: true
     headingSelector: 'h1,h2,h3'
     collapse: false
+  comments:
+    enable: true
+    type: waline
 
 # Prism 主题可自定义（可选）
 prism: false  # 关闭 prism 自定义（迁移到内置 highlight）
@@ -85,20 +88,20 @@ comment:
   # v3 客户端资源（ESM）
   js: https://unpkg.com/@waline/client@v3/dist/waline.js
   css: https://unpkg.com/@waline/client@v3/dist/waline.css
-  # 主题的老版本可能不认识下方 waline 子字段，如遇无效需改为自定义脚本初始化
-  waline:
-    serverURL: https://blog.yangyus8.top/comment/
-    placeholder: 发表评论...
-    pageview: true          # 统计当前页面浏览量（需要 wl_Counter 表）
-    comment: true           # 启用评论（可单独关掉仅显示浏览量）
-    emoji: []               # 可填 emoji CDN 列表
-    search: true            # 启用评论区内搜索（v3 客户端特性）
-    locale: zh-CN           # 显式设置语言；也可留空自动
-    reaction: false         # 若要启用需确保 wl_Reaction 表存在（已建）
-    dark: auto              # 根据 data-user-color-scheme 自动适配
-    requiredMeta: [nick,mail]  # 必填字段
-    login: enable           # 登录策略: enable / force / disable
-    wordLimit: 0            # 0 不限制
+
+# Waline
+# 从 Valine 衍生而来，额外增加了服务端和多种功能
+# See: https://waline.js.org/
+waline:
+  serverURL: https://blog.yangyus8.top/comment/
+  path: window.location.pathname
+  meta: ['nick', 'mail', 'link']
+  requiredMeta: ['nick']
+  lang: 'zh-CN'
+  emoji: ['https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo']
+  dark: 'html[data-user-color-scheme="dark"]'
+  wordLimit: 0
+  pageSize: 10
 
 # 主题颜色配置，其他不生效的地方请使用自定义 css 解决，配色可以在下方链接中获得启发
 # See: https://www.webdesignrankings.com/resources/lolcolors/
