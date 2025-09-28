@@ -104,6 +104,7 @@ post:
   banner_img: https://cdn.yangyus8.top/blog/20250928.webp
   banner_img_height: 70
   banner_mask_alpha: 0.3
+  default_index_img: https://cdn.yangyus8.top/blog/20250928.webp
   meta:
     author:
       enable: false
@@ -157,11 +158,11 @@ post:
     enable: true
     header: ''
   math:
-    enable: false
+    enable: true
     specific: false
     engine: mathjax
   mermaid:
-    enable: false
+    enable: true
     specific: false
     options: { theme: 'default' }
   comments:
@@ -360,7 +361,7 @@ about:
   banner_img: https://cdn.yangyus8.top/blog/20250928.webp
   banner_img_height: 60
   banner_mask_alpha: 0.3
-  avatar: /img/avatar.png
+  avatar: https://cdn.yangyus8.top/blog/YangYuS8.webp
   name: "杨与S8"
   intro: "探索 · 实践 · 记录 · 分享"
 links:

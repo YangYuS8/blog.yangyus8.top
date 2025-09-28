@@ -7,29 +7,28 @@ tags:
   - SSH
   - GitHub
 banner_img: https://cdn.yangyus8.top/blog/2025/09/f460fe18ab4d7b9f96666e1079a768ad.webp
-cover: https://cdn.yangyus8.top/blog/2025/09/f460fe18ab4d7b9f96666e1079a768ad.webp
+index_img: https://cdn.yangyus8.top/blog/2025/09/f460fe18ab4d7b9f96666e1079a768ad.webp
 toc: true
 comments: true
 abbrlink: '16268779'
 date: 2025-09-28 07:11:31
 updated: 2025-09-28 07:11:31
 ---
-
 最近给笔记本刷了Manjaro/Windows双系统，所以需要在Manjaro上重新配置一下开发环境，但是在配置git的时候发现官方教程不知道什么时候更新了，既然如此，干脆记录一下官方推荐的新的配置方案应该怎么用。毕竟通过ssh的方式推送代码速度更快，还不用每次都输入密码。
 
-------
+---
 
 ## 生成新SSH密钥对
 
 由于是新系统，自然不用检查以前的密钥，那么就直接开始。
 
-首先推荐进入`～/.ssh`目录，这是ssh密钥的默认保存位置，可以方便一下待会儿在重命名步骤的操作。
+首先推荐进入 `～/.ssh`目录，这是ssh密钥的默认保存位置，可以方便一下待会儿在重命名步骤的操作。
 
 ```bash
 cd ~/.ssh
 ```
 
-执行下面的命令生成新的密钥，记得将`youremail@email.com`替换为登录GitHub账号时的邮箱：
+执行下面的命令生成新的密钥，记得将 `youremail@email.com`替换为登录GitHub账号时的邮箱：
 
 ```bash
 ssh-keygen -t ed25519 -C "youremail@email.com"
@@ -43,23 +42,21 @@ ssh-keygen -t ed25519 -C "youremail@email.com"
 	如果你使用的是不支持 Ed25519 算法的旧系统，请执行以下命令使用RSA算法加密：
 </p>
 
-
 ```bash
 ssh-keygen -t rsa -b 4096 -C "youremail@email.com"
 ```
 
-运行ssh-keygen后，系统会提示你选择密钥保存的位置，这里由于我们之前已经进入了密钥的默认保存位置，所以就不用写前面的绝对路径了(当然，如果你要更改保存位置的话另说)。为了能更好的区分密钥，我个人推荐给默认密钥重命名为`id_ed25519_github`，这样既能避免以后生成别的密钥时重复写入到同一个文件(比如生成AUR的密钥)，又能清晰明了的标明每个密钥对应的平台，以后删起来也方便。
+运行ssh-keygen后，系统会提示你选择密钥保存的位置，这里由于我们之前已经进入了密钥的默认保存位置，所以就不用写前面的绝对路径了(当然，如果你要更改保存位置的话另说)。为了能更好的区分密钥，我个人推荐给默认密钥重命名为 `id_ed25519_github`，这样既能避免以后生成别的密钥时重复写入到同一个文件(比如生成AUR的密钥)，又能清晰明了的标明每个密钥对应的平台，以后删起来也方便。
 
 <p class="note note-info">
 	注意：如果刚才是使用RSA加密的密钥，最好重命名为id_rsa_github，避免弄混
 </p>
 
-
 接下来系统还会询问是否要输入密码来保护密钥，虽然确实可以增加安全性，但是会变成每次使用SSH密钥都需要输入密码，很明显这违背了我使用密钥的初心(懒得输密码)，因此我一般直接回车就行。
 
-密钥生成完成后，使用`ls -l`命令可以看到刚才生成的一对密钥：私钥`id_ed25519_github`和公钥`id_ed25519_github.pub`
+密钥生成完成后，使用 `ls -l`命令可以看到刚才生成的一对密钥：私钥 `id_ed25519_github`和公钥 `id_ed25519_github.pub`
 
-------
+---
 
 ## 将SSH私钥添加到ssh-agent
 
@@ -72,7 +69,6 @@ eval "$(ssh-agent -s)"
 <p class="note note-primary">
   正常情况下会输出`Agent pid xxxxx`，说明启动成功了，如果没有成功，可以试试下面的其他命令：
 </p>
-
 
 ```bash
 exec ssh-agent bash
@@ -88,9 +84,9 @@ exec ssh-agent zsh
 ssh-add ~/.ssh/id_ed25519_github
 ```
 
-添加成功的输出类似于`Identity added: ~/.ssh/id_ed25519_github (youremail@email.com)`
+添加成功的输出类似于 `Identity added: ~/.ssh/id_ed25519_github (youremail@email.com)`
 
-接下来我们需要编辑一下`～/.ssh/config`，如果没有这个文件自己创建一个即可，将下面的内容复制到文件中，只需要注意一下密钥的路径和名称是否对应：
+接下来我们需要编辑一下 `～/.ssh/config`，如果没有这个文件自己创建一个即可，将下面的内容复制到文件中，只需要注意一下密钥的路径和名称是否对应：
 
 ```bash
 Host github
@@ -102,21 +98,21 @@ IdentitiesOnly yes
 
 修改完成后，我们本地的配置基本就完成了。
 
-------
+---
 
 ## 将SSH公钥添加到GitHub账户
 
 官网推荐的是使用[GitHub CLI](https://docs.github.com/zh/github-cli/github-cli/about-github-cli)添加，但是我并不是很喜欢，因此这里还是用网页的方式添加吧。
 
-登录GitHub官网后，通过[这个链接](https://github.com/settings/keys)进入SSH密钥的设置页面，我们点击右上角的`New SSH key`添加公钥
+登录GitHub官网后，通过[这个链接](https://github.com/settings/keys)进入SSH密钥的设置页面，我们点击右上角的 `New SSH key`添加公钥
 
 ![image-20250713090659258](https://cdn.yangyus8.top/blog/2025/09/6a2cd7715427b83698114641f67ca5d2.webp)
 
-来到`Add new SSH Key`页面后，这里有三个可以配置的选项：
+来到 `Add new SSH Key`页面后，这里有三个可以配置的选项：
 
 - Title：这个公钥的别名，我个人一般习惯写设备名，方便后续更换设备后删除；
 - Key type：保持默认即可；
-- Key：这里需要填入公钥`id_ed25519_github.pub`中的内容。
+- Key：这里需要填入公钥 `id_ed25519_github.pub`中的内容。
 
 我们可以执行下面的命令获取公钥内容：
 
@@ -124,13 +120,13 @@ IdentitiesOnly yes
 cat ~/.ssh/id_ed25519_github.pub
 ```
 
-输出的内容类似于`ssh-ed25519 xxx...xxx youremail@email.com`，将这一长串全部复制粘贴到Key的位置：
+输出的内容类似于 `ssh-ed25519 xxx...xxx youremail@email.com`，将这一长串全部复制粘贴到Key的位置：
 
 ![image-20250713091932956](https://cdn.yangyus8.top/blog/2025/09/0e8ae1390a6202861d8a2335bea6c9f4.webp)
 
-最后点击`Add SSH Key`就完成添加了。
+最后点击 `Add SSH Key`就完成添加了。
 
-------
+---
 
 ## 本地验证
 
@@ -146,7 +142,7 @@ ssh -T git@github.com
 
 至此，我们就完成了整个配置SSH密钥的过程......吗？
 
-------
+---
 
 ## 配置自动添加密钥
 
