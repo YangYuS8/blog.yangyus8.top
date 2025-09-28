@@ -51,12 +51,31 @@ docker exec twikoo-db mongosh --quiet --eval 'rs.status().members.forEach(m=>pri
 
 log "STEP 7: 创建索引 (幂等)"
 docker exec twikoo-db mongosh twikoo --quiet --eval '
-  function ei(c,s,o){const names=db.getCollection(c).getIndexes().map(i=>i.name);if(!names.includes(o.name)){db.getCollection(c).createIndex(s,o);print("created:"+o.name);}else{print("exists:"+o.name);} }
-  ei("comment", { url:1 }, { name:"url_1" });
-  ei("comment", { created:-1 }, { name:"created_-1" });
-  ei("comment", { rid:1 }, { name:"rid_1" });
-  ei("comment", { mailMd5:1 }, { name:"mailMd5_1" });
-  ei("counter", { url:1 }, { name:"url_counter_1" });
+  function ensureIndex(coll, spec, opts){
+    // 确保集合存在（createIndex 本身可建集合，但 getIndexes 在集合缺失时会抛 ns does not exist）
+    try {
+      if (!db.getCollectionNames().includes(coll)) {
+        db.createCollection(coll);
+        print("createCollection:"+coll);
+      }
+    } catch(e) { print("warn:createCollection:"+coll+" -> "+e); }
+
+    let existing = [];
+    try { existing = db.getCollection(coll).getIndexes().map(i=>i.name); } catch(e){ existing=[]; }
+    if (existing.indexOf(opts.name) === -1) {
+      try {
+        db.getCollection(coll).createIndex(spec, opts);
+        print("created:"+coll+"."+opts.name);
+      } catch(e){ print("error:createIndex:"+coll+"."+opts.name+" -> "+e); }
+    } else {
+      print("exists:"+coll+"."+opts.name);
+    }
+  }
+  ensureIndex("comment", { url:1 }, { name:"url_1" });
+  ensureIndex("comment", { created:-1 }, { name:"created_-1" });
+  ensureIndex("comment", { rid:1 }, { name:"rid_1" });
+  ensureIndex("comment", { mailMd5:1 }, { name:"mailMd5_1" });
+  ensureIndex("counter", { url:1 }, { name:"url_counter_1" });
 '
 
 log "STEP 8: 启动 Twikoo 服务"
