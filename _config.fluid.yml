@@ -38,9 +38,19 @@ index:
 
 # 页脚
 footer:
-  content: '©<%= new Date().getFullYear() %> 杨与S8 <%- partial("_includes/build_revision") %>'
+  # 说明：主题不会对这里再执行二次 EJS 渲染，所以原先的 <%= %> 不会生效。
+  # 改为占位 span + 前端 JS 注入年份与构建版本（构建版本通过 Hexo generator 输出文件）。
+  content: '©<span data-year></span> 杨与S8 <span id="build-rev" style="opacity:.7;font-family:monospace"></span> <span id="build-time" style="opacity:.6;"></span>'
   beian:
-    enable: false
+    enable: true
+    # ICP证号
+    icp_text: 辽ICP备2024030730号-1
+    # 公安备案号，不填则只显示ICP
+    police_text: 
+    # 公安备案的编号，用于URL跳转查询
+    police_code: 
+    # 公安备案的图片. 为空时不显示备案图片
+    police_icon: /img/police_beian.png
 
 # 代码块增强配置（基于官方最新字段 + 站点自定义主题）
 code:
@@ -172,7 +182,8 @@ post:
 # （已移除 prism 配置，统一使用 highlight.js）
 
 # 自定义资源注入
-custom_js: []
+custom_js:
+  - /js/footer-year.js
 custom_css: []
 
 # Twikoo 配置（选择其一部署方式：腾讯云 CloudBase / Vercel / 自托管）
