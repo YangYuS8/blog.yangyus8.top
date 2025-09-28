@@ -5,7 +5,18 @@
 # ================= 基础变量 =================
 SHELL := /bin/bash
 HEXO := npx hexo
-IMAGE := ${BLOG_IMAGE:-ghcr.io/OWNER/yangyus8-blog:latest}
+# 镜像命名参数（可通过 make OWNER=xxx IMAGE_NAME=xxx IMAGE_TAG=xxx 覆盖）
+OWNER ?= yangyus8
+IMAGE_NAME ?= blog
+IMAGE_TAG ?= latest
+
+# 组合默认镜像（符合 ghcr.io/<owner>/<name>:<tag> 规范；全部小写）
+IMAGE ?= ghcr.io/$(OWNER)/$(IMAGE_NAME):$(IMAGE_TAG)
+
+# 若环境提供 BLOG_IMAGE 则优先生效（避免之前使用 Bash 参数展开在 GNU Make 中被截断的问题）
+ifdef BLOG_IMAGE
+IMAGE := $(BLOG_IMAGE)
+endif
 DOCKER_COMPOSE := docker compose
 
 # 默认目标
@@ -42,6 +53,7 @@ endif
 # ================= Docker 本地构建与运行 =================
 .PHONY: docker-build
 docker-build: ## 本地构建多阶段镜像 (不推送)
+	@echo "[BUILD] 镜像: $(IMAGE)"
 	docker build -t $(IMAGE) .
 
 ## 本地镜像快速运行（可按需启用）
