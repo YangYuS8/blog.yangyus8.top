@@ -227,6 +227,7 @@ fi
 
 ```bash
 source ~/.zshrc
+# source ~/.bashrc
 ```
 
 然后新开一个终端验证一下：
@@ -238,7 +239,27 @@ ssh -T git@github.com
 
 ![image-20251012183505260](https://cdn.yangyus8.top/blog/2025/10/80d7b821921be1f9338ac77e6d63f9bb.webp)
 
-好了，这下终于不用担心了，博主终于可以睡个好觉了QAQ.
+~~好了，这下终于不用担心了，博主终于可以睡个好觉了QAQ.~~
+
+睡个蛋，我都准备关电脑了，结果在VSCode里面推送的时候出权限问题了，原因是我用gnome-keyring的时候设置了硬编码SSH_AUTH_SOCK，现在直接给出解决方案：
+
+在上面的基础上，修改`~/.zshrc`（或者是`~/.bashrc`）：
+
+```bash
+# 注释掉下面这两行：
+#export GPG_AGENT_INFO=~/.gnupg/S.gpg-agent:0:1
+#export SSH_AUTH_SOCK=~/.gnupg/S.gpg-agent.ssh
+
+# 添加这一行：
+export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
+
+# 下面的保持不变：
+if command -v keychain >/dev/null 2>&1; then
+  eval "$(keychain --eval --quiet ~/.ssh/id_ed25519 ~/.ssh/id_ed25519_github ~/.ssh/id_ed25519_>
+fi
+```
+
+然后注销并重新登录图形会话一次，让 VS Code、GUI 进程都拿到该变量，应该就没问题了
 
 > 参考文献：
 >
