@@ -243,7 +243,39 @@ ssh -T git@github.com
 
 睡个蛋，我都准备关电脑了，结果在VSCode里面推送的时候出权限问题了，原因是我用gnome-keyring的时候设置了硬编码SSH_AUTH_SOCK，现在直接给出解决方案：
 
-在上面的基础上，修改`~/.zshrc`（或者是`~/.bashrc`）：
+首先创建户服务和环境文件：
+
+```bash
+mkdir -p ~/.config/systemd/user ~/.config/environment.d
+```
+
+创建`~/.config/systemd/user/ssh-agent.service`，填入下面的内容：
+
+```shell
+[Unit]
+Description=User SSH Agent
+[Service]
+Type=simple
+Environment=SSH_AUTH_SOCK=%t/ssh-agent.socket
+ExecStart=/usr/bin/ssh-agent -D -a ${SSH_AUTH_SOCK}
+[Install]
+WantedBy=default.target
+```
+
+然后创建`~/.config/environment.d/10-ssh-agent.conf`，填入下面的内容：
+
+```shell
+SSH_AUTH_SOCK=%t/ssh-agent.socket
+```
+
+接下来启动刚刚创建的服务，并将其设置为开机自启：
+
+```bash
+systemctl --user daemon-reload
+systemctl --user enable --now ssh-agent.service
+```
+
+继续修改`~/.zshrc`（或者是`~/.bashrc`）：
 
 ```bash
 # 注释掉下面这两行：
