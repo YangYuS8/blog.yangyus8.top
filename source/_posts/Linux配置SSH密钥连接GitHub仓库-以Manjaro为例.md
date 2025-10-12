@@ -285,10 +285,16 @@ systemctl --user enable --now ssh-agent.service
 # 添加这一行：
 export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
 
-# 下面的保持不变：
+# 修改下面，使用 keychain 只“加载密钥”，不去改动环境
 if command -v keychain >/dev/null 2>&1; then
-  eval "$(keychain --eval --quiet ~/.ssh/id_ed25519 ~/.ssh/id_ed25519_github ~/.ssh/id_ed25519_>
+  keychain --quiet ~/.ssh/id_ed25519 ~/.ssh/id_ed25519_github ~/.ssh/id_ed25519_gitee
 fi
+```
+
+清理旧的keychain 环境文件：
+
+```bash
+rm -rf ~/.keychain
 ```
 
 然后注销并重新登录图形会话一次，让 VS Code、GUI 进程都拿到该变量，应该就没问题了
