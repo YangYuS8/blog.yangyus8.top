@@ -282,12 +282,19 @@ systemctl --user enable --now ssh-agent.service
 #export GPG_AGENT_INFO=~/.gnupg/S.gpg-agent:0:1
 #export SSH_AUTH_SOCK=~/.gnupg/S.gpg-agent.ssh
 
-# 添加这一行：
+# 1) 固定到 systemd 用户服务提供的 socket（已启用的 ssh-agent.service）
 export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
 
-# 修改下面，使用 keychain 只“加载密钥”，不去改动环境
+# 2) 让 keychain 只“加载密钥”，不去启动/覆盖 agent
+#    注意这里用 eval，但在它之后立刻再强制设回固定 socket
 if command -v keychain >/dev/null 2>&1; then
-  keychain --quiet ~/.ssh/id_ed25519 ~/.ssh/id_ed25519_github ~/.ssh/id_ed25519_gitee
+  eval "$(keychain --eval --quiet ~/.ssh/id_ed25519 ~/.ssh/id_ed25519_github ~/.ssh/id_ed25519_gitee)"
+  export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
+fi
+
+# 3) 兜底：如果 agent 可用但还没有身份，就再静默加一遍（会弹密码提示）
+if ! ssh-add -l >/dev/null 2>&1; then
+  ssh-add ~/.ssh/id_ed25519 ~/.ssh/id_ed25519_github ~/.ssh/id_ed25519_gitee
 fi
 ```
 
