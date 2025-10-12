@@ -186,6 +186,60 @@ ssh -T git@github.com # 应显示成功消息
 
 至此，才是真正完成了所有配置SSH密钥的过程，虽然本篇是以Manjaro和GitHub为例，但对于其他Linux系统和其他需要ssh密钥连接的平台其实基本也是通用的。
 
+------
+
+## 2025.10.12更新
+
+好吧，本来以为这篇博客可以完结了，没想到还能有后续：
+
+博主最近更换了Manjaro的桌面环境，从KDE换成了Hyprland，体验确实更舒服了，但配置的过程确是灾难级的。这其中的辛酸暂且不提，今天的重点还是在密钥配置上。
+
+出于一些原因，博主的`~/.zshrc`文件被覆写了，导致原来的配置失效了（当然，仅仅是自动添加密钥部分），由于我把以前KDE的密钥管理服务Kwallet换成了现在的gnome-keyring，可能中间出了什么问题，所以现在自动添加的部分应该是用不了了。现在给出我使用的最新方案，可以保证跨桌面环境使用：
+
+首先我们需要安装一个叫keychain的软件，安装方式如下：
+
+```bash
+# Arch/Manjaro:
+sudo pacman -S keychain
+# Debian/Ubuntu:
+sudo apt install keychain
+```
+
+安装完成后，修改`~/.zshrc`（或者是`~/.bashrc`）:
+
+```bash
+# 使用 keychain 复用/启动 ssh-agent，并加载密钥（存在才加载）
+if command -v keychain >/dev/null 2>&1; then
+  eval "$(keychain --eval --quiet ~/.ssh/id_ed25519_github)"
+fi
+```
+
+当然，如果要加载多个密钥也是可以的，只需要在第一个密钥后面接着写就行：
+
+```bash
+# 使用 keychain 复用/启动 ssh-agent，并加载三把密钥（存在才加载）
+if command -v keychain >/dev/null 2>&1; then
+  eval "$(keychain --eval --quiet ~/.ssh/id_ed25519_github ~/.ssh/id_ed25519_gitee ~/.ssh/id_ed25519_gitlab)"
+fi
+```
+
+修改完成后刷新一下终端配置文件：
+
+```bash
+source ~/.zshrc
+```
+
+然后新开一个终端验证一下：
+
+```bash
+ssh-add -l
+ssh -T git@github.com
+```
+
+![image-20251012183505260](https://cdn.yangyus8.top/blog/2025/10/80d7b821921be1f9338ac77e6d63f9bb.webp)
+
+好了，这下终于不用担心了，博主终于可以睡个好觉了QAQ.
+
 > 参考文献：
 >
 > - [GitHub文档 - 生成新的 SSH 密钥并将其添加到 ssh-agent](https://docs.github.com/zh/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
